@@ -9,8 +9,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
-// LƯU Ý: Nếu chưa có 2 file này, hãy tạm comment lại để code không báo lỗi nhé!
-import { OrderItem } from '../../orders/entities/order-item.entity';
 import { CartItem } from '../../cart/entities/cart-item.entity';
 
 @Entity('products')
@@ -45,10 +43,6 @@ export class Product {
 
   @Column({ nullable: true })
   categoryId!: string;
-
-  // Nếu chưa có OrderItem, comment đoạn này lại
-  @OneToMany(() => OrderItem, (item) => item.product)
-  orderItems!: OrderItem[];
 
   // Nếu chưa có CartItem, comment đoạn này lại
   @OneToMany(() => CartItem, (item) => item.product)
