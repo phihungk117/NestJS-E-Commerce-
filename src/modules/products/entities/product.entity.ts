@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
 import { CartItem } from '../../cart/entities/cart-item.entity';
+import { OrderItem } from '../../orders/entities/order-item.entity';
 
 @Entity('products')
 export class Product {
@@ -44,9 +45,11 @@ export class Product {
   @Column({ nullable: true })
   categoryId!: string;
 
-  // Nếu chưa có CartItem, comment đoạn này lại
   @OneToMany(() => CartItem, (item) => item.product)
   cartItems!: CartItem[];
+
+  @OneToMany(() => OrderItem, (item) => item.product)
+  orderItems!: OrderItem[];
 
   @CreateDateColumn()
   createdAt!: Date;
