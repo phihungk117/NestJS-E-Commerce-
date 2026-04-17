@@ -14,13 +14,13 @@ import { OrderItem } from './order-item.entity';
 import { OrderStatus } from '../../../common/enums/order-status.enum';
 
 @Entity('orders')
-export class Order{
+export class Order {
   @PrimaryGeneratedColumn('uuid')
-  id!:string;
+  id!: string;
 
-  @ManyToOne(() =>User,(user) => user.orders,{onDelete:'CASCADE'})
-  @JoinColumn({name:'userId'})
-  user!:User
+  @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user!: User;
 
   @Column()
   userId!: string;
@@ -43,6 +43,4 @@ export class Order{
 
   @UpdateDateColumn()
   updatedAt!: Date;
-
-
 }

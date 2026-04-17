@@ -10,7 +10,6 @@ import { Role } from '../../../common/enums/role.enum';
 import { CartItem } from '../../cart/entities/cart-item.entity';
 import { Order } from '../../orders/entities/order.entity';
 
-
 @Entity('users')
 export class User {
   // Dung uuid cho id thay vi so tu tang

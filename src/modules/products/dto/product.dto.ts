@@ -10,25 +10,25 @@ import {
 import { Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
 
-export class CreateProductDto{
-    @IsString()
-    name!:string;
+export class CreateProductDto {
+  @IsString()
+  name!: string;
 
-    @IsOptional()
-    @IsString()
-    description?: string;
+  @IsOptional()
+  @IsString()
+  description?: string;
 
-    @Type(() => Number)
-    @IsNumber({maxDecimalPlaces:2})
-    @IsPositive()//Giá sản phẩm phải là số dương (lớn hơn 0), không thể bán sản phẩm với giá âm được.
-    price!:number;
+  @Type(() => Number)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @IsPositive() //Giá sản phẩm phải là số dương (lớn hơn 0), không thể bán sản phẩm với giá âm được.
+  price!: number;
 
-    @Type(() => Number)
-    @IsNumber()
-    @Min(0)
-    stock!: number;
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  stock!: number;
 
-    @IsOptional()
+  @IsOptional()
   @IsString()
   imageUrl?: string;
 
@@ -38,7 +38,7 @@ export class CreateProductDto{
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
-    @IsOptional()
+  @IsOptional()
   @IsBoolean()
   isActive?: boolean;
 }

@@ -22,4 +22,7 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`🚀 Server running on http://localhost:${port}/api/v1`);
 }
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('lỗi khi khởi động server', err);
+  process.exit(1);
+});

@@ -36,10 +36,7 @@ export class OrdersController {
   }
 
   @Patch(':id/cancel')
-  cancel(
-    @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: User,
-  ) {
+  cancel(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {
     return this.ordersService.cancelOrder(id, user);
   }
 

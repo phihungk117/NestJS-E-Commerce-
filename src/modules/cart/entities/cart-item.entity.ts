@@ -22,7 +22,9 @@ export class CartItem {
   @Column()
   userId!: string;
 
-  @ManyToOne(() => Product, (product) => product.cartItems, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Product, (product) => product.cartItems, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'productId' })
   product!: Product;
 

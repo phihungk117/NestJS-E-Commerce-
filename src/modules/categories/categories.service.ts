@@ -26,9 +26,11 @@ export class CategoriesService {
   }
 
   async create(dto: CreateCategoryDto): Promise<Category> {
-    const existing = await this.categoryRepository.findOne({ where: { name: dto.name } });
+    const existing = await this.categoryRepository.findOne({
+      where: { name: dto.name },
+    });
     if (existing) throw new ConflictException('Category name already exists');
-    
+
     const cat = this.categoryRepository.create(dto);
     return this.categoryRepository.save(cat);
   }
@@ -42,7 +44,7 @@ export class CategoriesService {
   // Update: Chuyển từ Xóa Cứng (remove) sang Xóa Mềm (Soft Delete)
   async remove(id: string): Promise<void> {
     const cat = await this.findOne(id);
-    cat.isActive = false; 
+    cat.isActive = false;
     await this.categoryRepository.save(cat);
   }
 }

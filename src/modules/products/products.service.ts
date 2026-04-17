@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, Like, FindOptionsWhere } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
 
@@ -28,7 +28,7 @@ export class ProductsService {
     const limit = Number(query?.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const where: any = { isActive: true };
+    const where: FindOptionsWhere<Product> = { isActive: true };
     if (query?.categoryId) where.categoryId = query.categoryId;
     if (query?.search) where.name = Like(`%${query.search}%`);
 
@@ -75,7 +75,9 @@ export class ProductsService {
   async decreaseStock(id: string, quantity: number): Promise<void> {
     const product = await this.findOne(id);
     if (product.stock < quantity) {
-      throw new BadRequestException(`Sản phẩm "${product.name}" không đủ tồn kho`);
+      throw new BadRequestException(
+        `Sản phẩm "${product.name}" không đủ tồn kho`,
+      );
     }
     product.stock -= quantity;
     await this.productRepository.save(product);

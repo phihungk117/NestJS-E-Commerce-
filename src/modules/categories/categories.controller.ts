@@ -6,8 +6,8 @@ import {
   Delete,
   Body,
   Param,
-  UseGuards,//Sử dụng "Bảo vệ" (Guards) để chặn các Request không hợp lệ
-  ParseUUIDPipe,//. Nó sẽ kiểm tra xem tham số trên URL có đúng chuẩn định dạng UUID (chuỗi mã hóa) hay không
+  UseGuards, //Sử dụng "Bảo vệ" (Guards) để chặn các Request không hợp lệ
+  ParseUUIDPipe, //. Nó sẽ kiểm tra xem tham số trên URL có đúng chuẩn định dạng UUID (chuỗi mã hóa) hay không
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
@@ -42,7 +42,10 @@ export class CategoriesController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateCategoryDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateCategoryDto,
+  ) {
     return this.categoriesService.update(id, dto);
   }
 

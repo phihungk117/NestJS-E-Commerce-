@@ -5,7 +5,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, FindOptionsWhere } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -15,6 +15,7 @@ import { CartService } from '../cart/cart.service';
 import { OrderStatus } from '../../common/enums/order-status.enum';
 import { Role } from '../../common/enums/role.enum';
 import { User } from '../users/entities/user.entity';
+import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class OrdersService {
@@ -25,6 +26,7 @@ export class OrdersService {
     private readonly orderItemRepository: Repository<OrderItem>,
     private readonly productsService: ProductsService,
     private readonly cartService: CartService,
+
     private readonly dataSource: DataSource,
   ) {}
 
@@ -51,14 +53,29 @@ export class OrdersService {
       for (const item of orderItems) {
         const product = await this.productsService.findOne(item.productId);
         if (!product.isActive) {
-          throw new BadRequestException(`Sản phẩm "${product.name}" không còn bán`);
+          throw new BadRequestException(
+            `Sản phẩm "${product.name}" không còn bán`,
+          );
         }
         if (product.stock < item.quantity) {
-          throw new BadRequestException(`Sản phẩm "${product.name}" không đủ tồn kho`);
+          throw new BadRequestException(
+            `Sản phẩm "${product.name}" không đủ tồn kho`,
+          );
         }
 
-        product.stock -= item.quantity;
-        await manager.save(product);
+        const updateResult = await manager
+          .createQueryBuilder()
+          .update(Product)
+          .set({ stock: () => `stock - ${item.quantity}` })
+          .where('id = :id', { id: product.id })
+          .andWhere('stock >= :quantity', { quantity: item.quantity })
+          .execute();
+
+        if (updateResult.affected === 0) {
+          throw new BadRequestException(
+            `Sản phẩm "${product.name}" hiện không đủ tồn kho do có giao dịch cùng lúc`,
+          );
+        }
 
         const subtotal = Number(product.price) * item.quantity;
         totalAmount += subtotal;
@@ -85,16 +102,22 @@ export class OrdersService {
       );
       await manager.save(orderItemEntities);
 
+      // Xóa giỏ hàng
       if (!dto.items || dto.items.length === 0) {
         await this.cartService.clearCart(user.id);
       }
 
-      return this.findOne(savedOrder.id);
+      const freshOrder = await manager.findOne(Order, {
+        where: { id: savedOrder.id },
+        relations: ['items', 'user'],
+      });
+      if (!freshOrder) throw new NotFoundException('Order not found');
+      return freshOrder;
     });
   }
 
   async findAll(query?: { status?: OrderStatus; userId?: string }) {
-    const where: any = {};
+    const where: FindOptionsWhere<Order> = {};
     if (query?.status) where.status = query.status;
     if (query?.userId) where.userId = query.userId;
 
@@ -129,25 +152,36 @@ export class OrdersService {
   }
 
   async cancelOrder(id: string, user: User): Promise<Order> {
-    const order = await this.findOne(id);
+    return this.dataSource.transaction(async (manager) => {
+      const order = await manager.findOne(Order, {
+        where: { id },
+        relations: ['items', 'user'],
+      });
 
-    if (order.userId !== user.id && user.role !== Role.ADMIN) {
-      throw new ForbiddenException('Bạn không có quyền hủy đơn này');
-    }
+      if (!order) throw new NotFoundException(`Order #${id} not found`);
 
-    if (order.status !== OrderStatus.PENDING) {
-      throw new BadRequestException('Chỉ có thể hủy đơn hàng đang chờ xử lý');
-    }
-
-    for (const item of order.items) {
-      if (item.productId) {
-        const product = await this.productsService.findOne(item.productId);
-        product.stock += item.quantity;
-        await this.productsService.update(product.id, { stock: product.stock });
+      if (order.userId !== user.id && user.role !== Role.ADMIN) {
+        throw new ForbiddenException('Bạn không có quyền hủy đơn này');
       }
-    }
 
-    order.status = OrderStatus.CANCELLED;
-    return this.orderRepository.save(order);
+      if (order.status !== OrderStatus.PENDING) {
+        throw new BadRequestException('Chỉ có thể hủy đơn hàng đang chờ xử lý');
+      }
+
+      for (const item of order.items) {
+        if (item.productId) {
+          // Cộng hoàn hàng an toàn bằng SQL
+          await manager
+            .createQueryBuilder()
+            .update(Product)
+            .set({ stock: () => `stock + ${item.quantity}` })
+            .where('id = :id', { id: item.productId })
+            .execute();
+        }
+      }
+
+      order.status = OrderStatus.CANCELLED;
+      return manager.save(order);
+    });
   }
 }

@@ -33,7 +33,7 @@ export class CartService {
 
   async addToCart(userId: string, dto: AddToCartDto) {
     const product = await this.productsService.findOne(dto.productId);
-    
+
     if (!product.isActive) {
       throw new BadRequestException('Sản phẩm không còn bán');
     }
@@ -67,7 +67,7 @@ export class CartService {
       where: { id: itemId, userId },
       relations: ['product'],
     });
-    
+
     if (!item) throw new NotFoundException('Cart item not found');
 
     if (dto.quantity > item.product.stock) {
@@ -83,7 +83,7 @@ export class CartService {
       where: { id: itemId, userId },
     });
     if (!item) throw new NotFoundException('Cart item not found');
-    
+
     await this.cartRepository.remove(item);
     return { message: 'Đã xóa khỏi giỏ hàng' };
   }

@@ -18,7 +18,7 @@ import { User } from '../users/entities/user.entity';
 @Controller('cart')
 @UseGuards(JwtAuthGuard)
 export class CartController {
-    //tiêm cartService vào contro để lát có thể sử dụng logic
+  //tiêm cartService vào contro để lát có thể sử dụng logic
   constructor(private readonly cartService: CartService) {}
 
   @Get()
