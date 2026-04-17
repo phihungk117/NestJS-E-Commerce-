@@ -42,6 +42,9 @@ export class User {
   @OneToMany(() => CartItem, (cartItem) => cartItem.user)
   cartItems!: CartItem[];
 
+  @OneToMany(() => Order, (order) => order.user)
+  orders!: Order[];
+
   @CreateDateColumn()
   createdAt!: Date;
 
