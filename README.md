@@ -1,98 +1,228 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 Dự Án Backend NestJS E-Commerce
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Chào mừng bạn đến với dự án E-Commerce được xây dựng bằng kiến trúc mạnh mẽ và chặt chẽ của **NestJS** kết hợp với **TypeORM** và **MySQL**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## ⚙️ Hướng Dẫn Cài Đặt và Khởi Chạy (Getting Started)
 
-## Description
+1. **Cài đặt thư viện:**
+   Mở terminal tại thư mục gốc và chạy lệnh:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+   ```bash
+   npm install
+   ```
 
-## Project setup
+2. **Chạy Server (Chế độ Development):**
+   Chạy lệnh này khởi động máy chủ cùng tính năng tự động tải lại code khi có thay đổi:
+   ```bash
+   npm run start:dev
+   ```
+   > 🎯 _Máy chủ sẽ khởi động tại `http://localhost:3000/api/v1`_
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## 📖 Bảng Cửu Chương Test Bằng POSTMAN
 
-```bash
-# development
-$ npm run start
+> **QUAN TRỌNG:** `baseUrl` `http://localhost:3000/api/v1`.
 
-# watch mode
-$ npm run start:dev
+### 1. 🛡️ NHÓM AUTH (ĐĂNG KÝ / ĐĂNG NHẬP)
 
-# production mode
-$ npm run start:prod
-```
+**1.1 Đăng ký tài khoản (Register)**
 
-## Run tests
+- **Method:** `POST`
+- **URL:** `{{baseUrl}}/auth/register`
+- **Auth Type:** None
+- **Body (raw - JSON):**
+  ```json
+  {
+    "email": "khachhang@gmail.com",
+    "password": "password123",
+    "fullName": "Khách Hàng VIP",
+    "phone": "0987654321",
+    "address": "123 Đường B, Quận 1"
+  }
+  ```
 
-```bash
-# unit tests
-$ npm run test
+**1.2 Đăng nhập (Login)**
 
-# e2e tests
-$ npm run test:e2e
+- **Method:** `POST`
+- **URL:** `{{baseUrl}}/auth/login`
+- **Auth Type:** None
+- **Body (raw - JSON):**
+  `json
+{
+  "email": "khachhang@gmail.com",
+  "password": "password123"
+}
+`
+  > _(Quan trọng: Lấy đoạn mã `access_token` ở kết quả trả về để dùng cho các API yêu cầu Auth Type = Bearer Token bên dưới)._
 
-# test coverage
-$ npm run test:cov
-```
+---
 
-## Deployment
+### 2. 👤 NHÓM USERS (NGƯỜI DÙNG)
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+**2.1 Xem thông tin cá nhân (Profile)**
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- **Method:** `GET`
+- **URL:** `{{baseUrl}}/users/me`
+- **Auth Type:** Bearer Token (Gắn mã Token mới đăng nhập vào)
+- **Body:** None
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+**2.2 Cập nhật thông tin cá nhân**
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- **Method:** `PATCH`
+- **URL:** `{{baseUrl}}/users/me`
+- **Auth Type:** Bearer Token
+- **Body (raw - JSON):**
+  `json
+{
+  "fullName": "Bùi Xuân Huấn",
+  "address": "Phố đi bộ"
+}
+`
+  > _(Trừ 2 API trên, các API còn lại trong nhánh `/users/:id` đều bắt buộc Token phải là của **Admin**)._
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+### 3. 📂 NHÓM DANH MỤC (CATEGORIES)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+**3.1 Tạo danh mục mới (Chỉ ADMIN)**
 
-## Support
+- **Method:** `POST`
+- **URL:** `{{baseUrl}}/categories`
+- **Auth Type:** Bearer Token (Phải là Token của Admin)
+- **Body (raw - JSON):**
+  `json
+{
+  "name": "Giày Thể Thao",
+  "description": "Chuyên giày Sneakers siêu cấp"
+}
+`
+  > _(Copy ID của category vừa tạo để đem thả vào lúc tạo Sản phẩm)._
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**3.2 Xem toàn bộ danh mục**
 
-## Stay in touch
+- **Method:** `GET`
+- **URL:** `{{baseUrl}}/categories`
+- **Auth Type:** None (Ai cũng xem được)
+- **Body:** None
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+### 4. 👕 NHÓM SẢN PHẨM (PRODUCTS)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+**4.1 Tạo sản phẩm mới (Chỉ ADMIN)**
+
+- **Method:** `POST`
+- **URL:** `{{baseUrl}}/products`
+- **Auth Type:** Bearer Token (Admin)
+- **Body (raw - JSON):**
+  `json
+{
+  "name": "Giày Nike Air Max",
+  "description": "Cao su mềm êm ái",
+  "price": 1500000,
+  "stock": 50,
+  "categoryId": "CẮM_ID_CỦA_CATEGORY_VÀO_ĐÂY"
+}
+`
+  > _(Copy cái ID của Product sinh ra để mang đi mua hàng)._
+
+**4.2 Xem toàn bộ sản phẩm (Kèm tìm kiếm)**
+
+- **Method:** `GET`
+- **URL:** `{{baseUrl}}/products?page=1&limit=10&search=Nike`
+- **Auth Type:** None (Khách vãng lai cũng xem được)
+- **Body:** None
+
+**4.3 Xem chi tiết 1 sản phẩm**
+
+- **Method:** `GET`
+- **URL:** `{{baseUrl}}/products/CẮM_ID_CỦA_PRODUCT_VÀO_ĐÂY`
+- **Auth Type:** None
+
+---
+
+### 5. 🛒 NHÓM GIỎ HÀNG (CART)
+
+**5.1 Thêm vào giỏ hàng**
+
+- **Method:** `POST`
+- **URL:** `{{baseUrl}}/cart`
+- **Auth Type:** Bearer Token (Của Khách mua hàng)
+- **Body (raw - JSON):**
+  ```json
+  {
+    "productId": "CẮM_ID_CỦA_PRODUCT_VÀO_ĐÂY",
+    "quantity": 2
+  }
+  ```
+
+**5.2 Xem giỏ hàng của tôi**
+
+- **Method:** `GET`
+- **URL:** `{{baseUrl}}/cart`
+- **Auth Type:** Bearer Token
+- **Body:** None
+
+**5.3 Sửa số lượng của 1 món trong giỏ**
+
+- **Method:** `PATCH`
+- **URL:** `{{baseUrl}}/cart/CẮM_CART_ITEM_ID_VÀO_ĐÂY` _(Lưu ý đây là ID của dòng Item trong Cart, KHÔNG phải ID Product)_
+- **Auth Type:** Bearer Token
+- **Body (raw - JSON):**
+  ```json
+  {
+    "quantity": 5
+  }
+  ```
+
+**5.4 Dọn sạch giỏ hàng (Clear Cart)**
+
+- **Method:** `DELETE`
+- **URL:** `{{baseUrl}}/cart/clear`
+- **Auth Type:** Bearer Token
+
+---
+
+### 6. 📦 NHÓM ĐƠN HÀNG (ORDERS)
+
+**6.1 Đặt hàng (Checkout xuất kho từ Giỏ Hàng)**
+
+- **Method:** `POST`
+- **URL:** `{{baseUrl}}/orders`
+- **Auth Type:** Bearer Token
+- **Body (raw - JSON):**
+  `json
+{
+  "shippingAddress": "456 Đường C, Lầu 2, phòng 204",
+  "note": "Gửi cho lễ tân dùm",
+  "items": [] 
+}
+`
+  > _(Mảng items để rỗng `[]` hệ thống sẽ tự bế toàn bộ Giỏ hàng đi tính tiền)._
+
+**6.2 Xem danh sách đơn hàng đã đặt**
+
+- **Method:** `GET`
+- **URL:** `{{baseUrl}}/orders/my`
+- **Auth Type:** Bearer Token
+- **Body:** None
+
+**6.3 Khách tự hủy đơn hàng (Cancel)**
+
+- **Method:** `PATCH`
+- **URL:** `{{baseUrl}}/orders/CẮM_ID_ĐƠN_HÀNG_VÀO_ĐÂY/cancel`
+- **Auth Type:** Bearer Token
+- **Body:** None
+
+**6.4 Quản lý giao hàng (Chỉ ADMIN)**
+
+- **Method:** `PATCH`
+- **URL:** `{{baseUrl}}/orders/CẮM_ID_ĐƠN_HÀNG_VÀO_ĐÂY/status`
+- **Auth Type:** Bearer Token (Token Admin)
+- **Body (raw - JSON):**
+  ```json
+  {
+    "status": "shipped"
+  }
+  ```
